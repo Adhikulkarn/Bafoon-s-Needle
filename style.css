@@ -1,0 +1,350 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body{
+    margin:0;
+    height: 130vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(13, 13, 13);
+   /* background-image: url("cvb.jpg");
+    background-size: cover;*/
+  }
+
+  /*guest 1*/
+
+  .button1{
+    position:absolute;
+    background-color:  rgb(13, 13, 13);
+    bottom:410px;
+    left:680px;
+    height:30px;
+    width:20px;
+    display:flex;
+    justify-content: center;
+    align-items: center;border:2px solid   rgb(13, 13, 13);
+    border-radius:10px;
+    opacity: 0;
+  }
+  
+  .button1 .btn1 {
+     cursor:pointer; 
+  }
+
+  /*chief huest*/
+
+  .button2{
+    position:absolute;
+    background-color:   rgb(13, 13, 13);
+    bottom:390px;
+    left:740px;
+    width:30px;
+    height:50px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border:2px solid  rgb(13, 13, 13);
+    border-radius:10px;
+    opacity: 0;
+  }
+  
+  /*guest 2 */
+  
+  .button3{
+    position:absolute;
+    background-color:   rgb(13, 13, 13);
+    bottom:420px;
+    left:800px;
+    width:20px;
+    height:20px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border:2px solid   rgb(13, 13, 13);
+    border-radius:10px;
+    opacity: 0; 
+  }
+
+  /*Guest 3*/
+
+  .button4{
+    position:absolute;
+    background-color:  rgb(13, 13, 13);
+    bottom:450px;
+    left:780px;
+    width:30px;
+    height:20px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border:2px solid   rgb(13, 13, 13);
+    border-radius:10px;
+    opacity: 0;
+  }
+
+  /*guest 4*/
+
+  .button5{
+    position:absolute;
+    background-color: rgb(13, 13, 13);
+    bottom:450px;
+    left:695px;
+    width:30px;
+    height:20px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border:2px solid  rgb(13, 13, 13);
+    border-radius:10px;
+    opacity: 0;
+  }
+  
+  #flames1{
+    position:absolute;
+    width:1em;
+  }
+  
+  .on1 #flames1::after{
+    content:'';
+    position:absolute;
+    width:inherit;
+    height:2.4em;
+    top:-10.4em;
+    left:1.2em;
+    background: radial-gradient(orange, yellow); /* Mixed color of orange and yellow */
+    border-radius: 50% 50% 20% 20%;
+    box-shadow: 0 -0.6em 0.4em rgb(255, 85, 0);
+    animation: enlarge1 0.1s linear 0s infinite normal;
+    enlarge1 0.1s linear 0s infinite normal;
+  }
+  
+  
+  @keyframes enlarge1{ 
+  to{
+    filter: drop-shadow(2px 3px 8px orange);
+    filter:blur(0.4em);
+  }
+  }
+  
+  /*.on1 #glow1{
+    position:absolute;
+    width:2em;
+    height:3.4em;
+    background-color: orangered;
+    border-radius: 50%;
+    top:19em;
+    left:40em;
+    filter: blur(0.2em);
+    animation-name: blink1;
+    animation-duration: 0.1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  
+  }*/
+  
+  @keyframes blink1{
+    to{
+      filter: blur(6em) opacity(0.6);
+    }
+  }
+  
+  #flames2{
+    position:absolute;
+    width:1em;
+  }
+  
+  .on2 #flames2::after {
+    content: '';
+    position: absolute;
+    width: 1em; /* Increased width */
+    height: 2.6em; /* Increased height */
+    top: -10em; /* Adjusted top position */
+    left: 5.2em; /* Adjusted left position */
+    background: radial-gradient(orange,yellow);
+    border-radius: 50% 50% 20% 20%;
+    box-shadow:0 -0.6em 0.4em rgb(255, 85, 0);
+    animation: enlarge1 0.1s linear 0s infinite normal;
+    
+}
+
+@keyframes enlarge2 {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1); /* Increased scale */
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+   
+  
+   /* .on2 #glow2{
+    position:absolute;
+    width:2em;
+    height:3.2em;
+    background-color: orangered;
+    border-radius: 50%;
+    top:20em;
+    left:45em;
+    filter: blur(0.2em);
+    animation-name: blink2;
+    animation-duration: 0.1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  
+  }*/
+  
+  @keyframes blink2{
+    to{
+      filter: blur(6em) opacity(0.5);
+    }
+  }
+  
+  #flames3{
+    position:absolute;
+    width:1em;
+  }
+  
+  .on3 #flames3::after {
+    content: '';
+    position: absolute;
+    width: 1em; /* Increased width */
+    height: 2.4em; /* Increased height */
+    top: -10.4em; /* Adjusted top position */
+    left: 9em; /* Adjusted left position */
+    background: radial-gradient(orange, yellow);
+    border-radius: 50% 50% 20% 20%;
+    box-shadow: 0 -0.6em 0.4em rgb(255, 85, 0);
+    animation: enlarge3 0.1s linear 0s infinite normal;
+    background-color: rgb(255, 106, 0);
+}
+
+@keyframes enlarge3 {
+    to {
+        filter: drop-shadow(2px 3px 8px orange) blur(0.4em);
+    }
+}
+ 
+  /*.on3 #glow3{
+    position:absolute;
+    width:2em;
+    height:4em;
+    background-color: orangered;
+    border-radius: 50%;
+    top:19em;
+    left:48em;
+    filter: blur(0.2em);
+    animation-name: blink3;
+    animation-duration: 0.1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  
+  }*/
+  
+  @keyframes blink3{
+    to{
+      filter: blur(6em) opacity(0.5);
+    }
+  }
+  
+  #flames4{
+    position:absolute;
+    width:1em;
+  }
+  
+  .on4 #flames4::after {
+    content: '';
+    position: absolute;
+    width: inherit;
+    height: 2.4em;
+    top: -11.5em;
+    left: 7.5em;
+    background: radial-gradient(orange, yellow); /* Adjusted gradient */
+    border-radius: 50% 50% 20% 20%;
+    box-shadow: 0 -0.6em 0.4em rgb(255, 85, 0);
+    animation: enlarge4 0.1s linear 0s infinite normal;
+    background-color: rgb(255, 106, 0);
+}
+
+@keyframes enlarge4 {
+    to {
+        filter: drop-shadow(2px 3px 8px orange) blur(0.4em);
+    }
+}
+
+  
+  /*.on4 #glow4{
+    position:absolute;
+    width:2em;
+    height:3.4em;
+    background-color: orangered;
+    border-radius: 50%;
+    top:19em;
+    left:47em;
+    filter: blur(0.2em);
+    animation-name: blink4;
+    animation-duration: 0.1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  
+  }*/
+  
+  @keyframes blink4{
+    to{
+      filter: blur(6em) opacity(0.5);
+    }
+  }
+  
+    #flames5{
+    position:absolute;
+    width:1em;
+  }
+  
+  .on5 #flames5::after {
+    content: '';
+    position: absolute;
+    width: inherit;
+    height: 2.4em;
+    top: -11.5em;
+    left: 2.8em;
+    background: radial-gradient(orange, yellow); /* Adjusted gradient */
+    border-radius: 50% 50% 20% 20%;
+    box-shadow: 0 -0.6em 0.4em rgb(255, 85, 0);
+    animation: enlarge5 0.1s linear 0s infinite normal;
+    background-color: rgb(255, 106, 0);
+}
+
+@keyframes enlarge5 {
+    to {
+        filter: drop-shadow(2px 3px 8px orange) blur(0.4em);
+    }
+}
+
+ /* .on5 #glow5{
+    position:absolute;
+    width:2em;
+    height:3.4em;
+    background-color: orangered;
+    border-radius: 50%;
+    top:19em;
+    left:42em;
+    filter: blur(0.2em);
+    animation-name: blink5;
+    animation-duration: 0.1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  
+  }*/
+  
+  @keyframes blink5{
+    to{
+      filter: blur(6em) opacity(0.5);
+    }
+  }

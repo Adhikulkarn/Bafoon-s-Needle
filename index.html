@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="candle">
+	  <span id="glow1"></span>
+	  <span id="flames1"></span>
+	</div>
+    <div>
+        <span id="glow2"></span>
+        <span id="flames2"></span>
+      </div>
+      <div>
+        <span id="glow3"></span>
+		<span id="flames3"></span>
+      </div>
+      <div>
+	  <span id="glow4"></span>
+	  <span id="flames4"></span>
+	</div>
+	<div>
+	  <span id="glow5"></span>
+	  <span id="flames5"></span>
+	</div>
+    <div class="button1"><button class="btn1">Guest 1</button></div>
+	<div class="button2"><button class="btn2">Chief Guest</button></div>
+	<div class="button3"><button class="btn3">Guest 2</button></div>
+	<div class="button4"><button class="btn4">Guest 3</button></div>
+	<div class="button5"><button class="btn5">Guest 4</button></div>
+	<img src="Brass_Mughal_or_Deccan_Lamp__India_-_Michael_Backman_Ltd-removebg.png" height="400">
+	
+	<script>
+		let btn1 = document.querySelector('.btn1');
+		let btn2 = document.querySelector('.btn2');
+		let btn3 = document.querySelector('.btn3');
+		let btn4 = document.querySelector('.btn4');
+		let btn5 = document.querySelector('.btn5');
+        let body = document.querySelector('body');
+		btn1.onclick = function(){
+			body.classList.toggle('on1');
+		}
+		btn2.onclick = function(){
+			body.classList.toggle('on2');
+		}
+		btn3.onclick = function(){
+			body.classList.toggle('on3');
+		}
+		btn4.onclick = function(){
+			body.classList.toggle('on4');
+		}
+		btn5.onclick = function(){
+			body.classList.toggle('on5');
+		}
+	</script>
+</body>
+</html>

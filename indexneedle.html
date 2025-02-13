@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <title>EverybodyLovesData - Buffon's needle</title>
+
+    <link href="buffonsneedle.css" rel="stylesheet" media="screen">
+    <script src="https://d3js.org/d3.v7.js" charset="utf-8"></script>
+    <script src="addneedle.js"></script>
+
+</head>
+
+<body>
+    <header>
+        <div id="title_and_config">
+            <h1>Buffon's needle</h1>
+            <div id="link_and_reset">
+                <button id="reset_btn" onclick="reset_viz();">Reset viz</button>
+                <button id="sim_button" onclick="runSimulation();">Run sim ⚠️</button>
+                <a href="https://en.wikipedia.org/wiki/Buffon%27s_needle_problem" target="_blank">Wiki article</a>
+            </div>
+            <div id="throw_buttons">
+                    <label for="needles_to_throw">Number of needles to throw:</label>
+                    <input type="number" id="needles_to_throw" name="needles_to_throw" min="1" max="200" value="1">
+                    <button onclick="addNeedles(document.getElementById('needles_to_throw').value);">Throw</button>
+
+                        
+            </div>
+            <div id="sliders">
+                <p>#boards:</p>
+                <div class="slider">
+                    <input type="range" min="2" max="100" id="num_boards_slider" oninput="set_board_size();">
+                    <span id="num_boards_info" class="slider_number">20</span>
+                </div>
+                <p>Needle size:</p>
+                <div class="slider">
+                    <input type="range" min="0.1" max="1" step="0.1" id="needle_size_slider"
+                        oninput="set_needle_size();">
+                    <span id="needle_size_info" class="slider_number">50%</span>
+                </div>
+                <p>Zoom graph</p>
+                <div class="slider">
+                    <input type="range" min="0.1" max="1" step="0.1" id="zoom_slider" style="direction: rtl;"
+                        oninput="changeZoomLevel();">
+                    <span id="zoom_slider_info" class="slider_number">100%</span>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div id="info_and_pi_graph">
+            <div id="all_info">
+                <div id="throws_info"></div>
+                <div id="crosses_info"></div>
+                <div id="pi_info"></div>
+                <div id="pi_calculation"></div>
+            </div>
+
+            <svg id="pi_graph" height="100px">
+                <path id="pi_path"></path>
+                <line id="pi_line"></line>
+                <text id="pi_line_text" class="tick_text"></text>
+                <line id="max_line" class="data_line"></line>
+                <text id="max_line_text" class="tick_text"></text>
+                <line id="min_line" class="data_line"></line>
+                <text id="min_line_text" class="tick_text"></text>
+            </svg>
+        </div>
+    </header>
+    <svg id="cvas"></svg>
+    <script>
+
+        // ---- viz init ---- //
+
+        // constants
+        const BOUNCE_ANIM_MIN_DURATION = 300;
+        const BOUNCE_ANIM_MAX_DURATION = 750;
+        const NEEDLE_COLOR = "#333333";
+        const NEEDLE_COLOR_CROSSED = "red";
+        const NEEDLE_COLOR_UNDECIDED = "#999999";
+
+        // defaults
+        let num_boards = 20;
+        let needle_size_factor = 0.5;
+
+        // define empty variables to init during reset
+        let cvas_width = undefined;
+        let cvas_height = undefined;
+        let line_spacing = undefined;
+        let needle_length = undefined;
+        let throws = 0;
+        let crosses = 0;
+        let pi = undefined;
+        let pi_vals = [];
+        let line_array_xs = [];
+        let zoom_level = 1;
+
+        reset_viz();
+
+        // ---- end viz init ---- //
+
+        function reset_viz() {
+            draw_board();
+            throws = 0;
+            crosses = 0;
+            pi = undefined;
+            pi_vals = [];
+            needle_length = line_spacing * needle_size_factor;
+            update_aggregate_info();
+            remove_needles();
+            d3.select("#pi_graph").select("#pi_path").attr("d", "");
+        }
+
+        function update_aggregate_info() {
+            d3.select("#throws_info").html("Needles: " + throws);
+            d3.select("#crosses_info").html("Crosses: " + crosses);
+            d3.select("#pi_info").html("π = " + (pi > 0 ? pi.toFixed(5) : ""));
+            d3.select("#pi_calculation").html(`(2 x ${needle_size_factor} x ${throws}) / <span style="color:red;">${crosses}</span>`);
+
+            d3.select("#num_boards_info").html(num_boards);
+            d3.select("#needle_size_info").html(`${needle_size_factor * 100}%`);
+            d3.select("#zoom_slider_info").html(`${zoom_level * 100}%`);
+
+            d3.select("#num_boards").property("value", num_boards);
+            d3.select("#needle_size").property("value", needle_size_factor);
+            d3.select("#zoom_slider").property("value", zoom_level);
+
+        }
+
+        function remove_needles() {
+            d3.select("#cvas").selectAll(".needle").remove();
+        }
+
+        function set_board_size() {
+            num_boards = document.getElementById("num_boards_slider").value;
+            reset_viz();
+        }
+
+        function set_needle_size() {
+            needle_size_factor = document.getElementById("needle_size_slider").value;
+            reset_viz();
+        }
+
+        function changeZoomLevel() {
+            zoom_level = document.getElementById("zoom_slider").value;
+            d3.select("#zoom_slider_info").html(`${zoom_level * 100}%`);
+            update_pi_graph();
+        }
+
+        function draw_board() {
+            cvas_width = d3.select("#cvas").node().getBoundingClientRect().width;
+            cvas_height = d3.select("#cvas").node().getBoundingClientRect().height;
+
+            line_array_xs = [];
+            line_spacing = cvas_width / num_boards;
+
+            for (let i = 0; i <= num_boards; i++) {
+                line_array_xs.push(i * line_spacing);
+            }
+            d3.select("#cvas").selectAll(".gridline").remove();
+            d3.select("#cvas").selectAll(".gridline").data(line_array_xs)
+                .enter().append("line").attr("x1", d => d).attr("x2", d => d)
+                .attr("y1", 0).attr("y2", cvas_height).style("stroke", "#AAAAAA")
+                .style("stroke-width", 1).attr("class", "gridline")
+        }
+
+        function addNeedles(num_needles = 1) {
+            if (d3.selectAll(".needle").empty()) {
+                // if there are no needles on the board, redraw board (in case window is resized)
+                reset_viz();
+            }
+
+            for (var i = 0; i < num_needles; i++) {
+                addNeedle();
+            }
+            update_aggregate_info();
+            update_pi_graph();
+        }
+
+        function update_pi_graph() {
+            let pi_svg = d3.select("#pi_graph");
+
+            let pi_graph_width = pi_svg.node().getBoundingClientRect().width;
+            let pi_graph_height = pi_svg.node().getBoundingClientRect().height;
+
+            slice_val = pi_vals.length * zoom_level;
+            data_to_plot = pi_vals.filter(d => !(d == Infinity)).slice(-slice_val);
+
+            margin_left = 50;
+            margin_top_bottom = 10;
+
+            // set ranges
+            let x_scale = d3.scaleLinear()
+                .range([margin_left, pi_graph_width - margin_left])
+                .domain(d3.extent(data_to_plot, function (d, i) { return i; }));
+
+            let y_range = d3.max(pi_vals) - d3.min(pi_vals);
+            let y_scale = d3.scaleLinear()
+                .range([pi_graph_height - margin_top_bottom, margin_top_bottom])
+                .domain([d3.min(data_to_plot), d3.max(data_to_plot)]);
+
+            /*
+            let yAxis = g => g
+                .attr("transform", `translate(${margin_left},0)`)
+                .transition(200)
+                .call(d3.axisLeft(y_scale));
+
+            // .tickValues([Math.PI]).ticks(4, ".3f")
+            pi_svg.join("g").attr("class", "y_axis").call(yAxis);
+            */
+            pi_svg.select("#pi_line").join("path")
+                .attr("x1", x_scale(0))
+                .attr("x2", x_scale(data_to_plot.length))
+                .attr("y1", y_scale(Math.PI))
+                .attr("y2", y_scale(Math.PI));
+
+            pi_svg.select("#pi_line_text").join("text").text("π")
+                .attr("x", x_scale(0))
+                .attr("y", y_scale(Math.PI))
+                .style("font-size", "8pt")
+                .attr("dy", "3")
+                .attr("dx", -10);
+            
+            ['min', 'max'].forEach(element => {
+                val = element == 'min' ? d3.min(data_to_plot) : d3.max(data_to_plot);
+                pi_svg.select(`#${element}_line`).join("path")
+                .attr("x1", x_scale(0)-15)
+                .attr("x2", x_scale(data_to_plot.length))
+                .attr("y1", y_scale(val))
+                .attr("y2", y_scale(val));
+                
+                pi_svg.select(`#${element}_line_text`).join("text").text(val.toFixed(2))
+                .attr("x", x_scale(0))
+                .attr("y", y_scale(val))
+                .style("font-size", "8pt")
+                .attr("dy", "3")
+                .attr("dx", -45);
+            });
+
+            // define the line
+            let valueline = d3.line()
+                .x(function (d, i) { return x_scale(i); })
+                .y(function (d, i) { return y_scale(d); });
+
+            actual_line = valueline(data_to_plot)
+
+            pi_svg.select("#pi_path").transition().ease(d3.easeCubicInOut).duration(400).attr("d", actual_line);
+        }
+
+        function runSimulation() {
+            reset_viz();
+            pi = 0;
+            while ((pi < 3.14) || (pi >= 3.15)) {
+                addNeedle();
+            }
+            update_aggregate_info();
+            update_pi_graph();
+        }
+
+        function addNeedle() {
+            // get random center point and rotation
+            let centre_x = d3.randomUniform(0, cvas_width)();
+            let centre_y = d3.randomUniform(0, cvas_height)();
+            let needle_rotation = d3.randomUniform(0, 360)();
+
+            // calculate coordinates
+            x1 = centre_x - Math.cos(needle_rotation) * needle_length * 0.5;
+            x2 = centre_x + Math.cos(needle_rotation) * needle_length * 0.5;
+            y1 = centre_y - Math.sin(needle_rotation) * needle_length * 0.5;
+            y2 = centre_y + Math.sin(needle_rotation) * needle_length * 0.5;
+
+            // check if at least one line is crossed
+            x_min = Math.min(x1, x2);
+            x_max = Math.max(x1, x2);
+            let cross_array = line_array_xs.filter(element => ((x_min <= element) && (x_max >= element)));
+            let is_crossed = cross_array.length > 0;
+
+            // update calculations
+            throws += 1;
+            crosses += is_crossed; // implicit conversion boolean -> int
+            pi = (2 * needle_size_factor * throws) / (crosses);
+            pi_vals.push(pi);
+
+            let needle_color = is_crossed ? NEEDLE_COLOR_CROSSED : NEEDLE_COLOR;
+
+            let bounce_speed = d3.randomUniform(BOUNCE_ANIM_MIN_DURATION, BOUNCE_ANIM_MAX_DURATION)();
+
+            d3.select("#cvas").append("line")
+                .attr("x1", x1).attr("y1", y1)
+                .attr("x2", x2).attr("y2", y2)
+                .style("stroke", NEEDLE_COLOR_UNDECIDED) // Needles start out light grey
+                .style("stroke-width", 1.5)
+                .attr("transform", "scale(2)")
+                .transition()
+                .ease(d3.easeBounceOut)
+                .duration(bounce_speed)
+                .attr("transform", "scale(1)")
+                .transition()
+                .ease(d3.easeCircleIn)
+                .duration(20)
+                .style("stroke", needle_color)
+                .attr("class", "needle");
+        }
+
+    </script>
+</body>
+
+</html>
